@@ -1,3 +1,3 @@
 module.exports = {
-    url: 'mongodb://localhost:27017/api-node'
+    url: 'mongodb://localhost:27017/find-beers'
 }
