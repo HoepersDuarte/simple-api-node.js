@@ -1,21 +1,22 @@
 const Beer = require('../models/beer.model.js');
+const Pub = require('../models/pub.model.js');
 
 // Create and Save a new Beer
 exports.create = (req, res) => {
     // Validate request
-    if (!req.body.name || !req.body.description || !req.body.image  || !req.body.alcohol ) {
+    if (!req.body.name || !req.body.description || !req.body.image || !req.body.alcohol) {
         return res.status(400).send({
             message: "beer name, description, image and alcohol can not be empty"
         });
     }
 
-    if (typeof(req.body.alcohol) != "number") {
+    if (typeof (req.body.alcohol) != "number") {
         return res.status(400).send({
             message: "alcohol can not be string"
         });
     }
 
-    if(!req.body.pubs) {
+    if (!req.body.pubs) {
         req.body.pubs = [];
     }
 
@@ -81,9 +82,21 @@ exports.findPubs = (req, res) => {
                     message: "Beer not found with id " + req.params.beerId
                 });
             }
-            const pubs = []
-            
-            res.send(pubs);
+            const pubsArray = []
+            beer.pubs.forEach(id => {
+                Pub.findById(id)
+                    .then(pub => {
+                        if (!pub) {
+                            pubsArray.push('');
+                        }
+                        else {
+                            pubsArray.push(pub);
+                        }
+                    }).catch(err => {
+                        pubsArray.push('');
+                    });
+            });
+            res.send(pubsArray);
         }).catch(err => {
             if (err.kind === 'ObjectId') {
                 return res.status(404).send({

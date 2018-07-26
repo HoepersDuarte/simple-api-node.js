@@ -73,9 +73,21 @@ exports.findBeers = (req, res) => {
                     message: "Pub not found with id " + req.params.pugId
                 });
             }
-            const beers = []
-            
-            res.send(beers);
+            const beersArray = []
+            pub.beers.forEach(id => {
+                Beer.findById(id)
+                    .then(beer => {
+                        if (!beer) {
+                            beersArray.push('');
+                        }
+                        else {
+                            beersArray.push(beer);
+                        }
+                    }).catch(err => {
+                        beersArray.push('');
+                    });
+            });
+            res.send(beersArray);
         }).catch(err => {
             if (err.kind === 'ObjectId') {
                 return res.status(404).send({
