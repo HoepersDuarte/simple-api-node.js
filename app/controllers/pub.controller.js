@@ -74,15 +74,15 @@ exports.findBeers = (req, res) => {
                 });
             }
             const beersArray = []
-            pub.beers.forEach(id => {
+            const arrayTest = pub.beers
+            arrayTest.forEach(id => {
                 Beer.findById(id)
                     .then(beer => {
                         if (!beer) {
                             beersArray.push('');
                         }
-                        else {
-                            beersArray.push(beer);
-                        }
+                        beersArray.push(beer);
+                        console.log(beer);
                     }).catch(err => {
                         beersArray.push('');
                     });

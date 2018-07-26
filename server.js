@@ -31,6 +31,7 @@ app.get('/', (req, res) => {
 });
 
 require('./app/routes/beer.routes.js')(app);
+require('./app/routes/pub.routes.js')(app);
 
 // listen for requests
 app.listen(3000, () => {
