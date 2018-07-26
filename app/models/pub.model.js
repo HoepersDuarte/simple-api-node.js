@@ -1,10 +1,14 @@
 const mongoose = require('mongoose');
 
+const beerId = [ String ];
+
 const PubSchema = mongoose.Schema({
     name: String,
-    local: String,
+    localMap: String,
+    address: String,
+    beers: beerId
 }, {
-    timestamps: true
-});
+        timestamps: true
+    });
 
 module.exports = mongoose.model('Pub', PubSchema);

@@ -1,15 +1,26 @@
 const Pub = require('../models/pub.model.js');
+const Beer = require('../models/beer.model.js');
 
 exports.create = (req, res) => {
-    if (!req.body.local) {
+    if (!req.body.name || !req.body.address) {
         return res.status(400).send({
-            message: "Pub local can not be empty"
+            message: "Pub name and address can not be empty"
         });
+    }
+
+    if (!req.body.localMap) {
+        req.body.localMap = ''
+    }
+
+    if (!req.body.beers) {
+        req.body.beers = []
     }
 
     const pub = new Pub({
         name: req.body.name,
-        local: req.body.local
+        localMap: req.body.localMap,
+        address: req.body.address,
+        beers: req.body.beers
     });
 
     pub.save()
@@ -54,16 +65,69 @@ exports.findOne = (req, res) => {
         });
 };
 
-exports.update = (req, res) => {
-    if (!req.body.local) {
+exports.findBeers = (req, res) => {
+    Pub.findById(req.params.pugId)
+        .then(pub => {
+            if (!pub) {
+                return res.status(404).send({
+                    message: "Pub not found with id " + req.params.pugId
+                });
+            }
+            const beers = []
+            
+            res.send(beers);
+        }).catch(err => {
+            if (err.kind === 'ObjectId') {
+                return res.status(404).send({
+                    message: "Pub not found with id " + req.params.pugId
+                });
+            }
+            return res.status(500).send({
+                message: "Error retrieving pub with id " + req.params.pugId
+            });
+        });
+};
+
+exports.updateBeers = (req, res) => {
+    if (!req.body.beers) {
         return res.status(400).send({
-            message: "Pub local can not be empty"
+            message: "beers can not be empty"
+        });
+    }
+
+    Pub.findByIdAndUpdate(req.params.pugId, {
+        beers: req.body.beers
+    }, { new: true })
+        .then(pub => {
+            if (!pub) {
+                return res.status(404).send({
+                    message: "Pub not found with id " + req.params.pugId
+                });
+            }
+            res.send(pub);
+        }).catch(err => {
+            if (err.kind === 'ObjectId') {
+                return res.status(404).send({
+                    message: "Pub not found with id " + req.params.pugId
+                });
+            }
+            return res.status(500).send({
+                message: "Error updating pub with id " + req.params.pugId
+            });
+        });
+};
+
+exports.update = (req, res) => {
+    if (!req.body.name || !req.body.address || !req.body.localMap) {
+        return res.status(400).send({
+            message: "Pub name, localMap and address can not be empty"
         });
     }
 
     Pub.findByIdAndUpdate(req.params.pubId, {
         name: req.body.name,
-        local: req.body.local
+        address: req.body.address,
+        localMap: req.body.localMap
     }, { new: true })
         .then(pub => {
             if (!pub) {
